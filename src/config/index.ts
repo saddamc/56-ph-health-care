@@ -12,5 +12,5 @@ export default {
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
     },
-    password_hash: process.env.JWT_SECRET,
+    password_hash: process.env.BCRYPT_SALT_ROUNDS,
 }
