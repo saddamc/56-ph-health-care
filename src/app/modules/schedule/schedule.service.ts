@@ -3,6 +3,7 @@ import { IOptions, paginationHelper } from '../../helper/paginationHelper';
 import { prisma } from '../../shared/prisma';
 import { addMinutes, addHours, format } from "date-fns";
 import { date } from 'zod';
+import { IJWTPayload } from '../../types/common';
 
 
 const insertIntoDB = async (payload: any) => {
@@ -71,7 +72,7 @@ const insertIntoDB = async (payload: any) => {
     return schedules;
 }
 
-const schedulesForDoctor = async (filters: any, options: IOptions) => {
+const schedulesForDoctor = async (user: IJWTPayload, filters: any, options: IOptions) => {
     const { page, limit, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(options);
     const { startDateTime: filterStartDateTime, endDateTime: filterEndDateTime } = filters;
 
@@ -96,8 +97,31 @@ const schedulesForDoctor = async (filters: any, options: IOptions) => {
 
     const whereConditions: Prisma.ScheduleWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
 
+    // 1st find doctor schedules
+    const doctorSchedules = await prisma.doctorSchedule.findMany({
+        where: {
+            doctor: {
+                email: user.email
+            }
+        },
+        select: {
+            scheduleId: true
+        }
+    })
+    // console.log(doctorSchedules);
+
+    // 2nd all id map for doctor schedules
+    const doctorScheduleIds = doctorSchedules.map(schedule => schedule.scheduleId);
+
+    // We want which Id add in doctor Schedule , this id don't show in available schedule for doctor
     const result = await prisma.schedule.findMany({
-        where: whereConditions,
+             // where: whereConditions  
+         where: {
+            ...whereConditions,
+            id: {
+                notIn: doctorScheduleIds
+            }
+        },
         skip,
         take: limit,
         orderBy: {
@@ -106,7 +130,13 @@ const schedulesForDoctor = async (filters: any, options: IOptions) => {
     });
 
     const total = await prisma.schedule.count({
-        where: whereConditions
+        // where: whereConditions
+         where: {
+            ...whereConditions,
+            id: {
+                notIn: doctorScheduleIds
+            }
+        }
     });
 
     return {
