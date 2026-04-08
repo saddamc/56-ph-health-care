@@ -4,6 +4,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import config from "../../../config";
 import { jwtHelper } from "../../helper/jwtHelper";
+import ApiError from "../../errors/ApiError";
+import httpStatus  from 'http-status';
 
 
 const login = async (payload: { email: string; password: string }) => {
@@ -15,16 +17,17 @@ const login = async (payload: { email: string; password: string }) => {
     })
 
     if (!user) {
-        throw new Error("No account found with this email");
+        throw new ApiError(httpStatus.NOT_FOUND, "No account found with this email");
     }
 
     if (user.status !== UserStatus.ACTIVE) {
-        throw new Error("Account is not active");
+        throw new ApiError(httpStatus.BAD_REQUEST, "Account is not active");
     }
 
     const isCorrectPassword = await bcrypt.compare(payload.password, user.password);
     if (!isCorrectPassword) {
-        throw new Error("Password is incorrect");
+        // 60-03
+        throw new ApiError(httpStatus.BAD_REQUEST, "Password is incorrect");
     }
 
     // const refreshToken = jwt.sign({ email: user.email, role: user.role }, config.jwt_access_Token as string, { algorithm: "HS256", expiresIn: "90d" }) // without helper function

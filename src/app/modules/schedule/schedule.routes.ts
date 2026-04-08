@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.post(
     "/",
+    auth(UserRole.ADMIN),
     ScheduleController.insertIntoDB
 )
 
@@ -18,6 +19,7 @@ router.get(
 
 router.delete(
     "/:id",
+    auth(UserRole.ADMIN),
     ScheduleController.deleteScheduleFromDB
 )
 
