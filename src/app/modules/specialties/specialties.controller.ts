@@ -1,25 +1,43 @@
-import { prisma } from "../../shared/prisma";
-import { IJWTPayload } from "../../types/common";
+import { Request, Response } from "express";
+import httpStatus from "http-status";
+import { SpecialtiesService } from "./specialties.service";
+import catchAsync from "../../shared/catchAsync";
+import sendResponse from "../../shared/sendResponse";
 
-const insertIntoDB = async (user: IJWTPayload, payload: {
-    scheduleIds: string[]
-}) => {
-    const doctorData = await prisma.doctor.findUniqueOrThrow({
-        where: {
-            email: user.email
-        }
+const inserIntoDB = catchAsync(async (req: Request, res: Response) => {
+    const result = await SpecialtiesService.inserIntoDB(req);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Specialties created successfully!",
+        data: result
     });
+});
 
-    const doctorScheduleData = payload.scheduleIds.map(scheduleId => ({
-        doctorId: doctorData.id,
-        scheduleId
-    }))
-
-    return await prisma.doctorSchedules.createMany({
-        data: doctorScheduleData
+const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
+    const result = await SpecialtiesService.getAllFromDB();
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Specialties data fetched successfully',
+        data: result,
     });
-}
+});
 
-export const DoctorScheduleService = {
-    insertIntoDB
-}
+const deleteFromDB = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await SpecialtiesService.deleteFromDB(id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Specialty deleted successfully',
+        data: result,
+    });
+});
+
+export const SpecialtiesController = {
+    inserIntoDB,
+    getAllFromDB,
+    deleteFromDB
+};
