@@ -15,4 +15,5 @@ export default {
     password_hash: process.env.BCRYPT_SALT_ROUNDS,
     jwt_access_Token: process.env.JWT_ACCESS_TOKEN,
     jwt_refresh_Token: process.env.JWT_REFRESH_TOKEN,
+    openRouterApiKey: process.env.OPENROUTER_API_KEY, //61-01
 }

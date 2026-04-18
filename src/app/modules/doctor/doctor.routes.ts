@@ -11,7 +11,7 @@ router.get(
 
 router.patch(
     "/:id",
-    auth(UserRole.ADMIN, UserRole.DOCTOR),
+    // auth(UserRole.ADMIN, UserRole.DOCTOR),
     DoctorController.updateIntoDB
 );
 
@@ -29,7 +29,7 @@ router.delete(
     auth(UserRole.ADMIN),
     DoctorController.softDelete);
     
-    
+    // 60-02
 router.post("/suggestion", DoctorController.getAISuggestions);
     
 
