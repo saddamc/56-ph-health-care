@@ -218,6 +218,11 @@ const getByIdFromDB = async (id: string): Promise<Doctor | null> => {
                 include: {
                     schedule: true
                 }
+            },
+            doctorSchedule: {
+                include: {
+                    schedule: true
+                }
             }
         },
     });

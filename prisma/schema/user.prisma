@@ -1,29 +1,29 @@
 model User {
-  id String @id @default(uuid())
-  email String @unique
-  password String
-  role UserRole @default(PATIENT)
-  needPasswordChange Boolean @default(true)
-  status UserStatus @default(ACTIVE)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                 String     @id @default(uuid())
+  email              String     @unique
+  password           String
+  role               UserRole   @default(PATIENT)
+  needPasswordChange Boolean    @default(true)
+  status             UserStatus @default(ACTIVE)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 
-  admin Admin?
-  doctor Doctor?
+  admin   Admin?
+  doctor  Doctor?
   patient Patient?
 
   @@map("users")
 }
 
 model Admin {
-  id String @id @default(uuid())
-  email String @unique
-  name String
-  profileImage String?
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String
+  profileImage  String?
   contactNumber String
-  isDeleted Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isDeleted     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   user User @relation(fields: [email], references: [email])
 
@@ -31,44 +31,46 @@ model Admin {
 }
 
 model Doctor {
-  id String @id @default(uuid())
-  name String
-  email String @unique
-  profilePhoto String?
-  contactNumber String
-  address String
-  registrationNumber String @unique
-  experience Int @default(0)
-  gender Gender
-  appointmentFee Int
-  qualification String
+  id                  String   @id @default(uuid())
+  name                String
+  email               String   @unique
+  profilePhoto        String?
+  contactNumber       String
+  address             String
+  registrationNumber  String   @unique
+  experience          Int      @default(0)
+  gender              Gender
+  appointmentFee      Int
+  qualification       String
   currentWorkingPlace String
-  designation String
-  idDeleted Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  designation         String
+  idDeleted           Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   user User @relation(fields: [email], references: [email])
 
-  doctorSchedules DoctorSchedule[]   // 59-02
-  doctorSpecialties DoctorSpecialties[]  // 60-01
+  doctorSchedules   DoctorSchedule[] // 59-02
+  doctorSpecialties DoctorSpecialties[] // 60-01
+  appointments Appointment[]  // 61-06
+  prescriptions Prescription[]  // 61-06
 
   @@map("doctors")
 }
 
 model Patient {
-  id String @id @default(uuid())
-  name String
-  email String @unique
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
   profilePhoto String?
-  address String?
-  isDeleted Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  address      String?
+  isDeleted    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   user User @relation(fields: [email], references: [email])
+  appointments Appointment[]  // 61-06
+  prescriptions Prescription[]  // 61-06
 
   @@map("patients")
 }
-
-
