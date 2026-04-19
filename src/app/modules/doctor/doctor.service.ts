@@ -7,8 +7,6 @@ import ApiError from "../../errors/ApiError";
 import httpStatus from 'http-status';
 import { openai } from "../../helper/open-router";
 import { extractJsonFromMessage } from "../../helper/extractJsonFromMessage";
-// import { openai } from "../../helper/open-router";
-// import { extractJsonFromMessage } from "../../helper/extractJsonFromMessage";
 
 
 const getAllFromDB = async (filters: any, options: IOptions) => {
