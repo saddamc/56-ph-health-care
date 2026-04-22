@@ -1,30 +1,44 @@
 enum UserRole {
-  PATIENT
-  DOCTOR
-  ADMIN
+    PATIENT
+    DOCTOR
+    ADMIN
 }
 
-
 enum UserStatus {
-  ACTIVE
-  INACTIVE
-  DELETED
+    ACTIVE
+    INACTIVE
+    DELETED
 }
 
 enum Gender {
-  MALE
-  FEMALE
+    MALE
+    FEMALE
 }
 
-// 61-06
 enum AppointmentStatus {
-  SCHEDULED
-  INPROGRESS
-  COMPLETED
-  CANCEL
+    SCHEDULED
+    INPROGRESS
+    COMPLETED
+    CANCEL
 }
 
 enum PaymentStatus {
-  PAID
-  UNPAID
+    PAID
+    UNPAID
+}
+
+enum BloodGroup {
+    A_POSITIVE
+    B_POSITIVE
+    O_POSITIVE
+    AB_POSITIVE
+    A_NEGATIVE
+    B_NEGATIVE
+    O_NEGATIVE
+    AB_NEGATIVE
+}
+
+enum MaritalStatus {
+    MARRIED
+    UNMARRIED
 }
