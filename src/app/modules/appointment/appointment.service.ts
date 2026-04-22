@@ -124,7 +124,7 @@ const createAppointment = async (user: IJWTPayload, payload: { doctorId: string,
         }
     });
 
-    const isBookedOrNot = await prisma.doctorSchedule.findFirstOrThrow({
+    const isBookedOrNot = await prisma.doctorSchedules.findFirstOrThrow({
         where: {
             doctorId: payload.doctorId,
             scheduleId: payload.scheduleId,
@@ -144,7 +144,7 @@ const createAppointment = async (user: IJWTPayload, payload: { doctorId: string,
             }
         })
 
-        await tnx.doctorSchedule.update({
+        await tnx.doctorSchedules.update({
             where: {
                 doctorId_scheduleId: {
                     doctorId: doctorData.id,

@@ -98,7 +98,7 @@ const schedulesForDoctor = async (user: IJWTPayload, filters: any, options: IOpt
     const whereConditions: Prisma.ScheduleWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
 
     // 1st find doctor schedules
-    const doctorSchedules = await prisma.doctorSchedule.findMany({
+    const doctorSchedules = await prisma.doctorSchedules.findMany({
         where: {
             doctor: {
                 email: user.email

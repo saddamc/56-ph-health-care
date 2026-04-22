@@ -19,7 +19,7 @@ const insertIntoDB = async (user: IJWTPayload, payload: {
     // return {user, payload};
 
     // create many doctor schedule
-    return await prisma.doctorSchedule.createMany({
+    return await prisma.doctorSchedules.createMany({
         data: doctorScheduleData
     });    
 }
