@@ -1,3 +1,4 @@
+import { stripe } from "../../helper/stripe";
 import { prisma } from "../../shared/prisma";
 import { IJWTPayload } from "../../types/common";
 import { v4 as uuidv4 } from "uuid";
@@ -102,7 +103,8 @@ const createAppointment = async (
       },
     });
 
-    await tnx.doctorSchedule.update({
+    
+    await tnx.doctorSchedule.update({  
       where: {
         doctorId_scheduleId: {
           doctorId: doctorData.id,
@@ -116,13 +118,44 @@ const createAppointment = async (
       
       const transactionId = uuidv4();
 
-      await tnx.payment.create({
+    // const paymentData = 62-04
+      const paymentData = await tnx.payment.create({
           data: {
               appointmentId: appointmentData.id,
               amount: doctorData.appointmentFee,
               transactionId
           }
       })
+    
+    // 62-01
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      customer_email: user.email,
+      line_items: [
+        {
+          price_data: {
+            currency: 'bdt',
+            product_data: {
+              name: `Appointment with ${doctorData.name}`
+            },
+            unit_amount: doctorData.appointmentFee * 100,
+          },
+          quantity: 1,
+        },
+      ],
+      // 62-04
+      metadata: {
+        appointmentId: appointmentData.id,
+        paymentId: paymentData.id
+      },
+      // success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `https://cabro.vercel.app/`,
+      // cancel_url: `${process.env.CLIENT_URL}/payment-failed`,
+      cancel_url: `https://saddambd.vercel.app/`,
+    })
+
+    console.log(session)
       
       return appointmentData;
   });

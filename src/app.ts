@@ -5,9 +5,18 @@ import notFound from './app/middlewares/notFound';
 import config from './config';
 import router from './app/routes';
 import cookieParser from 'cookie-parser'
+import { PaymentController } from './app/modules/payment/payment.controller';
 
 
 const app: Application = express();
+
+// 62-02
+app.post(
+    "/webhook",
+    express.raw({ type: "application/json" }), // important for signature verification
+    PaymentController.handleStripeWebhookEvent
+)
+
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true

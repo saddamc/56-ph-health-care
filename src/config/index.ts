@@ -16,4 +16,5 @@ export default {
     jwt_access_Token: process.env.JWT_ACCESS_TOKEN,
     jwt_refresh_Token: process.env.JWT_REFRESH_TOKEN,
     openRouterApiKey: process.env.OPENROUTER_API_KEY, //61-01
+    stripeSceretKey: process.env.STRIPE_SECRET_KEY,
 }
