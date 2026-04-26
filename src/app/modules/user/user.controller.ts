@@ -4,6 +4,8 @@ import { UserService } from './user.service';
 import sendResponse from '../../shared/sendResponse';
 import pick from '../../helper/pick';
 import { userFilterableFields } from './user.constant';
+import { IJWTPayload } from "../../types/common";
+import httpStatus from "http-status";
 
 const createPatient = catchAsync(async (req: Request, res: Response) => {
     const result = await UserService.createPatient(req);
@@ -52,7 +54,48 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
         meta: result.meta,
         data: result.data
     })
-})
+});
+
+const getMyProfile = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
+
+    const user = req.user;
+
+    const result = await UserService.getMyProfile(user as IJWTPayload);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "My profile data fetched!",
+        data: result
+    })
+});
+
+const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
+
+    const { id } = req.params;
+    const result = await UserService.changeProfileStatus(id, req.body)
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Users profile status changed!",
+        data: result
+    })
+});
+
+const updateMyProfie = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
+
+    const user = req.user;
+
+    const result = await UserService.updateMyProfie(user as IJWTPayload, req);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "My profile updated!",
+        data: result
+    })
+});
 
 
 
@@ -60,5 +103,8 @@ export const UserController = {
     createPatient,
     createAdmin,
     createDoctor,
-    getAllFromDB
+    getAllFromDB,
+    getMyProfile,
+    changeProfileStatus,
+    updateMyProfie,
 }
