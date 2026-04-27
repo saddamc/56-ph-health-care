@@ -353,6 +353,53 @@ const getAllFromDB = async (
     };
 };
 
+// const cancelUnpaidAppointments = async () => {
+//     const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
+
+//     const unPaidAppointments = await prisma.appointment.findMany({
+//         where: {
+//             createdAt: {
+//                 lte: thirtyMinAgo
+//             },
+//             paymentStatus: PaymentStatus.UNPAID
+//         }
+//     })
+
+//     const appointmentIdsToCancel = unPaidAppointments.map(appointment => appointment.id);
+
+//     await prisma.$transaction(async (tnx) => {
+//         await tnx.payment.deleteMany({
+//             where: {
+//                 appointmentId: {
+//                     in: appointmentIdsToCancel
+//                 }
+//             }
+//         })
+
+//         await tnx.appointment.deleteMany({
+//             where: {
+//                 id: {
+//                     in: appointmentIdsToCancel
+//                 }
+//             }
+//         })
+
+//         for (const unPaidAppointment of unPaidAppointments) {
+//             await tnx.doctorSchedules.update({
+//                 where: {
+//                     doctorId_scheduleId: {
+//                         doctorId: unPaidAppointment.doctorId,
+//                         scheduleId: unPaidAppointment.scheduleId
+//                     }
+//                 },
+//                 data: {
+//                     isBooked: false
+//                 }
+//             })
+//         }
+//     })
+// }
+
 const cancelUnpaidAppointments = async () => {
     const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
 
@@ -384,12 +431,12 @@ const cancelUnpaidAppointments = async () => {
             }
         })
 
-        for (const unPaidAppointment of unPaidAppointments) {
+        for (const upPaidAppointment of unPaidAppointments) {
             await tnx.doctorSchedules.update({
                 where: {
                     doctorId_scheduleId: {
-                        doctorId: unPaidAppointment.doctorId,
-                        scheduleId: unPaidAppointment.scheduleId
+                        doctorId: upPaidAppointment.doctorId,
+                        scheduleId: upPaidAppointment.scheduleId
                     }
                 },
                 data: {
@@ -397,6 +444,7 @@ const cancelUnpaidAppointments = async () => {
                 }
             })
         }
+
     })
 }
 
