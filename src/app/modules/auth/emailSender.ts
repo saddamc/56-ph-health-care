@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer'
 import config from '../../../config';
 
 const emailSender = async (
@@ -11,7 +11,7 @@ const emailSender = async (
         secure: false, // Use `true` for port 465, `false` for all other ports
         auth: {
             user: config.emailSender.email,
-            pass: config.emailSender.app_pass,  // app password
+            pass: config.emailSender.app_pass, // app password
         },
         tls: {
             rejectUnauthorized: false
