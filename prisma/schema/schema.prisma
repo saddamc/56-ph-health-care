@@ -1,8 +1,16 @@
+// generator client {
+//   // provider = "prisma-client"
+//   // output = "../src/generated"
+//   provider        = "prisma-client-js"
+//   previewFeatures = ["prismaSchemaFolder"]
+// }
+
+// datasource db {
+//   provider = "postgresql"
+// }
+
 generator client {
-  // provider = "prisma-client"
-  // output = "../src/generated"
-  provider        = "prisma-client-js"
-  previewFeatures = ["prismaSchemaFolder"]
+  provider = "prisma-client-js"
 }
 
 datasource db {

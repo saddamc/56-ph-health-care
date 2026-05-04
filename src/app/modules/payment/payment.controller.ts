@@ -1,14 +1,18 @@
 import { Request, Response } from "express";
-import catchAsync from "../../shared/catchAsync";
-import sendResponse from "../../shared/sendResponse";
+import config from "../../../config";
+import { stripe } from "../../../helpers/stripe";
+import catchAsync from "../../../shared/catchAsync";
+import sendResponse from "../../../shared/sendResponse";
 import { PaymentService } from "./payment.service";
-import { stripe } from "../../helper/stripe";
-
 
 const handleStripeWebhookEvent = catchAsync(async (req: Request, res: Response) => {
-    
     const sig = req.headers["stripe-signature"] as string;
-    const webhookSecret = "whsec_2561c69feb30bbf2513157ca3e7c274aecee59deddd8bd210c951db2065f98c4"
+    const webhookSecret = config.stripeWebhookSecret as string;
+
+    if (!webhookSecret) {
+        console.error("⚠️ Stripe webhook secret not configured");
+        return res.status(500).send("Webhook secret not configured");
+    }
 
     let event;
     try {
@@ -18,14 +22,26 @@ const handleStripeWebhookEvent = catchAsync(async (req: Request, res: Response) 
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
+    try {
+        const result = await PaymentService.handleStripeWebhookEvent(event);
 
-    const result = await PaymentService.handleStripeWebhookEvent(event);
-    sendResponse(res, {
-        statusCode: 200,
-        success: true,
-        message: 'Webhook request send successfully',
-        data: result,
-    });
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: 'Webhook processed successfully',
+            data: result,
+        });
+    } catch (error: any) {
+        console.error("❌ Error processing webhook:", error);
+        // Still return 200 to acknowledge receipt to Stripe
+        // Stripe will retry if we return an error
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: 'Webhook received but processing failed',
+            data: { error: error.message },
+        });
+    }
 });
 
 export const PaymentController = {
