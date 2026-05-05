@@ -43,7 +43,7 @@ ALTER TABLE "doctor_schedules" ADD COLUMN     "appointmentId" TEXT;
 
 -- AlterTable
 ALTER TABLE "doctor_specialties" ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL;
+ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
 -- AlterTable
 ALTER TABLE "doctors" ALTER COLUMN "address" DROP NOT NULL;
@@ -55,12 +55,15 @@ ALTER TABLE "patients" ADD COLUMN     "contactNumber" TEXT;
 ALTER TABLE "payments" ADD COLUMN     "stripeEventId" TEXT;
 
 -- AlterTable
+UPDATE "reviews" SET "comment" = '' WHERE "comment" IS NULL;
+
+-- AlterTable
 ALTER TABLE "reviews" ALTER COLUMN "rating" SET DATA TYPE DOUBLE PRECISION,
 ALTER COLUMN "comment" SET NOT NULL;
 
 -- AlterTable
 ALTER TABLE "specialties" ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL;
+ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
 -- AlterTable
 ALTER TABLE "users" ALTER COLUMN "role" DROP DEFAULT;
@@ -75,7 +78,7 @@ CREATE TABLE "medical_reports" (
     "reportName" TEXT NOT NULL,
     "reportLink" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+  "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "medical_reports_pkey" PRIMARY KEY ("id")
 );
