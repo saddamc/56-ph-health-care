@@ -1,5 +1,5 @@
-import { axios } from 'axios';
-import config from "../../config";
+import axios from 'axios';
+import config from '../config';
 
 export const askOpenRouter = async (messages: any[]) => {
   const response = await axios.post(

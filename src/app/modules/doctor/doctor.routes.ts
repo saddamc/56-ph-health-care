@@ -1,101 +1,39 @@
-import { Request, Response } from 'express';
-import sendResponse from '../../../shared/sendResponse';
-import httpStatus from 'http-status';
-import catchAsync from '../../../shared/catchAsync';
-import { DoctorService } from './doctor.service';
-import pick from '../../../shared/pick';
-import { doctorFilterableFields } from './doctor.constants';
+import express from 'express'
+import { DoctorController } from './doctor.controller';
+import auth from '../../middlewares/auth';
+import { UserRole } from '@prisma/client';
+import validateRequest from '../../middlewares/validateRequest';
+import { DoctorValidation } from './doctor.validation';
 
-const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
-    const filters = pick(req.query, doctorFilterableFields);
+const router = express.Router();
 
-    const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
+// AI driven doctor suggestion
+router.post('/suggestion', DoctorController.getAiSuggestion);
 
-    const result = await DoctorService.getAllFromDB(filters, options);
+// task 3
+router.get('/', DoctorController.getAllFromDB);
 
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'Doctors retrieval successfully',
-        meta: result.meta,
-        data: result.data,
-    });
-});
+//task 4
+router.get('/:id', DoctorController.getByIdFromDB);
 
-const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const result = await DoctorService.getByIdFromDB(id);
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'Doctor retrieval successfully',
-        data: result,
-    });
-});
+router.patch(
+    '/:id',
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
+    validateRequest(DoctorValidation.update),
+    DoctorController.updateIntoDB
+);
 
-const updateIntoDB = catchAsync(async (req: Request, res: Response) => {
+//task 5
+router.delete(
+    '/:id',
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+    DoctorController.deleteFromDB
+);
 
-    const { id } = req.params;
-    const result = await DoctorService.updateIntoDB(id, req.body);
+// task 6
+router.delete(
+    '/soft/:id',
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+    DoctorController.softDelete);
 
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Doctor data updated!",
-        data: result
-    })
-});
-
-const deleteFromDB = catchAsync(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const result = await DoctorService.deleteFromDB(id);
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'Doctor deleted successfully',
-        data: result,
-    });
-});
-
-
-const softDelete = catchAsync(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const result = await DoctorService.softDelete(id);
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'Doctor soft deleted successfully',
-        data: result,
-    });
-});
-
-const getAiSuggestion = catchAsync(async (req: Request, res: Response) => {
-    const { symptoms } = req.body;
-
-    // Basic validation
-    if (!symptoms || typeof symptoms !== 'string' || symptoms.trim().length < 5) {
-        return res.status(httpStatus.BAD_REQUEST).json({
-            success: false,
-            message: 'Please provide valid symptoms for doctor suggestion (minimum 5 characters).',
-        });
-    }
-
-    const result = await DoctorService.getAISuggestion({ symptoms: symptoms.trim() });
-
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'AI doctor suggestions retrieved successfully',
-        data: result,
-    });
-});
-
-
-export const DoctorController = {
-    updateIntoDB,
-    getAllFromDB,
-    getByIdFromDB,
-    deleteFromDB,
-    softDelete,
-    getAiSuggestion,
-}
+export const DoctorRoutes = router;

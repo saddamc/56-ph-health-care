@@ -1,6 +1,6 @@
 import { Doctor, Prisma, UserStatus } from "@prisma/client";
-import { askOpenRouter } from "../../helpers/openRouterClient";
-import { paginationHelper } from "../../helpers/paginationHelper";
+import { askOpenRouter } from "../../../helpers/openRouterClient";
+import { paginationHelper } from "../../../helpers/paginationHelper";
 import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { doctorSearchableFields } from "./doctor.constants";

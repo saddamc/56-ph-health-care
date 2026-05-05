@@ -1,6 +1,5 @@
 import { Server } from 'http';
 import app from './app';
-// import seedSuperAdmin from './helpers/seed';
 import config from './config';
 import seedSuperAdmin from './helpers/seed';
 
